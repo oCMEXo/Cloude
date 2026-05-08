@@ -1,0 +1,120 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: app-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  service-auth:
+    build:
+      context: ./service-auth
+      dockerfile: Dockerfile
+    container_name: service-auth
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      PORT: 3001
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  service-orders:
+    build:
+      context: ./service-orders
+      dockerfile: Dockerfile
+    container_name: service-orders
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      PORT: 3002
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  service-notifications:
+    build:
+      context: ./service-notifications
+      dockerfile: Dockerfile
+    container_name: service-notifications
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      PORT: 3003
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      PORT: 8080
+      AUTH_SERVICE_URL: http://service-auth:3001
+      ORDERS_SERVICE_URL: http://service-orders:3002
+      NOTIFICATIONS_SERVICE_URL: http://service-notifications:3003
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-auth
+      - service-orders
+      - service-notifications
+    networks:
+      - app-net
+    restart: unless-stopped
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
