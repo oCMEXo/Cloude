@@ -22,9 +22,9 @@ stages:
       - job: Validate_Auth
         displayName: 'service-auth — lint & type-check'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-auth
@@ -39,9 +39,9 @@ stages:
       - job: Validate_Orders
         displayName: 'service-orders — lint & type-check'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-orders
@@ -56,9 +56,9 @@ stages:
       - job: Validate_Notifications
         displayName: 'service-notifications — lint & type-check'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-notifications
@@ -77,9 +77,9 @@ stages:
       - job: Test_Auth
         displayName: 'service-auth — Jest'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-auth
@@ -104,9 +104,9 @@ stages:
       - job: Test_Orders
         displayName: 'service-orders — Jest'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-orders
@@ -131,9 +131,9 @@ stages:
       - job: Test_Notifications
         displayName: 'service-notifications — Jest'
         steps:
-          - task: NodeTool@1
+          - task: UseNode@1
             inputs:
-              versionSpec: $(nodeVersion)
+              version: $(nodeVersion)
             displayName: 'Install Node.js'
           - script: npm ci
             workingDirectory: service-notifications
