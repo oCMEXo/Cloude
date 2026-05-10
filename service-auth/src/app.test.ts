@@ -1,6 +1,5 @@
 import request from 'supertest';
 
-// mock the db layer so we don't need a real postgres for unit tests
 jest.mock('./users', () => {
   const users = new Map<string, { id: number; username: string; passwordHash: string; createdAt: Date }>();
   let nextId = 1;
@@ -31,8 +30,7 @@ jest.mock('./users', () => {
 });
 
 import { createApp } from './app';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const usersMock = require('./users');
+const usersMock = jest.requireMock('./users');
 
 const app = createApp();
 

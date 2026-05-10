@@ -36,8 +36,6 @@ describe('resolveRoute', () => {
   });
 
   it('does not partially match a non-segment prefix', () => {
-    // "/auth" rule should still match "/authenticated" by simple startsWith
-    // — this documents current behavior; production gateway might want stricter matching
     const r = resolveRoute('/authenticated', rules);
     expect(r?.service).toBe('auth');
   });

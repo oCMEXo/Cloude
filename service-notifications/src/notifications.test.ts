@@ -44,6 +44,12 @@ describe('validateRecipient', () => {
   it('rejects empty recipient', () => {
     expect(validateRecipient('email', '').ok).toBe(false);
   });
+
+  it('rejects unsupported channel', () => {
+    const r = validateRecipient('fax' as never, 'anything');
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/unsupported channel/);
+  });
 });
 
 describe('validateBody', () => {
@@ -119,6 +125,11 @@ describe('templateBody', () => {
 
   it('leaves unfilled placeholders alone', () => {
     expect(templateBody('Hello {{name}}', {})).toBe('Hello {{name}}');
+  });
+
+  it('substitutes multiple different vars in one pass', () => {
+    expect(templateBody('{{greeting}} {{name}}, order #{{id}}', { greeting: 'Hi', name: 'Bob', id: 7 }))
+      .toBe('Hi Bob, order #7');
   });
 });
 

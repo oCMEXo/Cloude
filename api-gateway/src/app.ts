@@ -16,7 +16,6 @@ export const ROUTES: RouteRule[] = [
 export function createApp(): express.Express {
   const app = express();
 
-  // request logging — runs before proxy hands off the body
   app.use((req: Request, _res: Response, next: NextFunction) => {
     logger.info('Gateway request', {
       method: req.method,
@@ -26,7 +25,6 @@ export function createApp(): express.Express {
     next();
   });
 
-  // gateway's own health endpoint — does not proxy
   app.get('/health', (_req: Request, res: Response) => {
     res.json({
       status: 'ok',
@@ -35,8 +33,6 @@ export function createApp(): express.Express {
     });
   });
 
-  // proxy each route to the appropriate service.
-  // pathRewrite strips the matched prefix so the upstream sees /login, not /auth/login.
   for (const rule of ROUTES) {
     app.use(
       rule.prefix,
@@ -54,8 +50,7 @@ export function createApp(): express.Express {
           },
           error: (err, _req, res) => {
             logger.error('Proxy error', { service: rule.service, err: err.message });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const anyRes = res as any;
+            const anyRes = res as import('http').ServerResponse;
             if (anyRes.writeHead && !anyRes.headersSent) {
               anyRes.writeHead(502, { 'Content-Type': 'application/json' });
               anyRes.end(JSON.stringify({ error: 'upstream service unavailable' }));
@@ -66,7 +61,6 @@ export function createApp(): express.Express {
     );
   }
 
-  // catch-all 404
   app.use((req: Request, res: Response) => {
     logger.warn('Unmatched route', { method: req.method, path: req.path });
     res.status(404).json({ error: 'no matching route', path: req.path });

@@ -1,22 +1,17 @@
 import request from 'supertest';
 import { OrderItem } from './orders';
 
-// in-memory mock of the repository layer
 jest.mock('./repository', () => {
   let nextId = 1;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const orders = new Map<number, any>();
+  const orders = new Map<number, ReturnType<typeof makeOrder>>();
+
+  function makeOrder(id: number, userId: string, items: OrderItem[], total: number) {
+    return { id, userId, total, status: 'pending' as const, items, createdAt: new Date() };
+  }
 
   return {
     insertOrder: jest.fn(async (userId: string, items: OrderItem[], total: number) => {
-      const order = {
-        id: nextId++,
-        userId,
-        total,
-        status: 'pending',
-        items,
-        createdAt: new Date()
-      };
+      const order = makeOrder(nextId++, userId, items, total);
       orders.set(order.id, order);
       return order;
     }),
@@ -38,8 +33,7 @@ jest.mock('./repository', () => {
 });
 
 import { createApp } from './app';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const repoMock = require('./repository');
+const repoMock = jest.requireMock('./repository');
 
 const app = createApp();
 

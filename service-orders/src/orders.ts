@@ -21,14 +21,12 @@ export function calculateSubtotal(items: OrderItem[]): number {
 }
 
 export function calculateDiscount(subtotal: number): number {
-  // tiered discount: 5% over $100, 10% over $500
   if (subtotal >= 500) return subtotal * 0.10;
   if (subtotal >= 100) return subtotal * 0.05;
   return 0;
 }
 
 export function calculateTax(subtotal: number, discount: number, taxRate = 0.21): number {
-  // VAT applies to the discounted amount
   return (subtotal - discount) * taxRate;
 }
 

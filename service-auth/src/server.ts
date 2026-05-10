@@ -5,7 +5,6 @@ import { logger } from './logger';
 const PORT = Number(process.env.PORT) || 3001;
 
 async function main() {
-  // simple retry — postgres may not be ready yet when container starts
   let attempts = 0;
   while (attempts < 10) {
     try {

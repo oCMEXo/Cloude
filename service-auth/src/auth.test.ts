@@ -40,6 +40,14 @@ describe('validateUsername', () => {
     const res = validateUsername('alice!');
     expect(res.ok).toBe(false);
   });
+
+  it('accepts username at minimum length boundary (3 chars)', () => {
+    expect(validateUsername('abc')).toEqual({ ok: true });
+  });
+
+  it('accepts username at maximum length boundary (32 chars)', () => {
+    expect(validateUsername('a'.repeat(32))).toEqual({ ok: true });
+  });
 });
 
 describe('validatePassword', () => {
@@ -60,13 +68,21 @@ describe('validatePassword', () => {
     const res = validatePassword('x'.repeat(129));
     expect(res.ok).toBe(false);
   });
+
+  it('accepts password at minimum length boundary (6 chars)', () => {
+    expect(validatePassword('abcdef')).toEqual({ ok: true });
+  });
+
+  it('accepts password at maximum length boundary (128 chars)', () => {
+    expect(validatePassword('x'.repeat(128))).toEqual({ ok: true });
+  });
 });
 
 describe('issueToken / verifyToken', () => {
   it('issues a JWT for a given username', () => {
     const token = issueToken('alice');
     expect(typeof token).toBe('string');
-    expect(token.split('.').length).toBe(3); // header.payload.signature
+    expect(token.split('.').length).toBe(3);
   });
 
   it('verifies a valid token and returns the payload', () => {

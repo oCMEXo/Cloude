@@ -42,7 +42,6 @@ export function createApp(): express.Express {
 
     try {
       const notification = await enqueue(recipient, channel as Channel, finalBody, subject);
-      // simulate sending — in production this would call SMTP/Twilio/FCM
       await markSent(notification.id);
       const updated = await get(notification.id);
       return res.status(201).json(updated);

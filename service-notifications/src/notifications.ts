@@ -59,7 +59,6 @@ export function templateBody(template: string, vars: Record<string, string | num
   for (const [key, value] of Object.entries(vars)) {
     result = result.replace(new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g'), String(value));
   }
-  // warn about unfilled placeholders
   const unfilled = result.match(/\{\{\s*\w+\s*\}\}/g);
   if (unfilled) {
     logger.warn('Template has unfilled placeholders', { unfilled });
@@ -72,6 +71,5 @@ export function shouldRetry(attempts: number, maxAttempts = 3): boolean {
 }
 
 export function backoffMs(attempts: number): number {
-  // exponential backoff: 1s, 2s, 4s, 8s, ...
   return 1000 * Math.pow(2, attempts);
 }

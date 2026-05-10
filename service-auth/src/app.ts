@@ -7,7 +7,6 @@ export function createApp(): express.Express {
   const app = express();
   app.use(express.json());
 
-  // request logging middleware
   app.use((req: Request, _res: Response, next: NextFunction) => {
     logger.info('HTTP request', { method: req.method, path: req.path });
     next();

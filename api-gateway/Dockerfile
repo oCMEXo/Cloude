@@ -1,4 +1,3 @@
-# ---- build stage ----
 FROM node:20-alpine AS build
 WORKDIR /app
 
@@ -10,7 +9,6 @@ COPY src ./src
 RUN npm run build
 RUN npm prune --omit=dev
 
-# ---- runtime stage ----
 FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production

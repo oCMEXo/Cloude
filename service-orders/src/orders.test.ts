@@ -39,6 +39,14 @@ describe('calculateDiscount', () => {
     expect(calculateDiscount(500)).toBeCloseTo(50);
     expect(calculateDiscount(1000)).toBeCloseTo(100);
   });
+
+  it('applies 5% at exactly $100 boundary', () => {
+    expect(calculateDiscount(100)).toBeCloseTo(5);
+  });
+
+  it('applies 10% at exactly $500 boundary', () => {
+    expect(calculateDiscount(500)).toBeCloseTo(50);
+  });
 });
 
 describe('calculateTax', () => {
@@ -77,6 +85,14 @@ describe('calculateTotal', () => {
     const r = calculateTotal([{ productId: 'p', quantity: 3, unitPrice: 0.1 }]);
     expect(r.subtotal).toBe(0.3);
     expect(r.total).toBeCloseTo(0.36, 2);
+  });
+
+  it('applies 10% discount and VAT for a $600 subtotal', () => {
+    const r = calculateTotal([{ productId: 'p', quantity: 6, unitPrice: 100 }]);
+    expect(r.subtotal).toBe(600);
+    expect(r.discount).toBeCloseTo(60, 2);
+    expect(r.tax).toBeCloseTo(113.4, 2);
+    expect(r.total).toBeCloseTo(653.4, 2);
   });
 });
 
@@ -149,5 +165,13 @@ describe('canTransition', () => {
 
   it('rejects cancelled → anything (terminal)', () => {
     expect(canTransition('cancelled', 'paid')).toBe(false);
+  });
+
+  it('allows paid → cancelled', () => {
+    expect(canTransition('paid', 'cancelled')).toBe(true);
+  });
+
+  it('rejects shipped → paid (backwards)', () => {
+    expect(canTransition('shipped', 'paid')).toBe(false);
   });
 });

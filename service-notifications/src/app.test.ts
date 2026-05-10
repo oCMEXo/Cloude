@@ -2,22 +2,15 @@ import request from 'supertest';
 
 jest.mock('./repository', () => {
   let nextId = 1;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const items = new Map<number, any>();
+  const items = new Map<number, ReturnType<typeof makeItem>>();
+
+  function makeItem(id: number, recipient: string, channel: string, body: string, subject?: string) {
+    return { id, recipient, channel, subject: subject || null, body, status: 'queued' as const, attempts: 0, createdAt: new Date(), sentAt: null };
+  }
 
   return {
     enqueue: jest.fn(async (recipient: string, channel: string, body: string, subject?: string) => {
-      const item = {
-        id: nextId++,
-        recipient,
-        channel,
-        subject: subject || null,
-        body,
-        status: 'queued',
-        attempts: 0,
-        createdAt: new Date(),
-        sentAt: null
-      };
+      const item = makeItem(nextId++, recipient, channel, body, subject);
       items.set(item.id, item);
       return item;
     }),
@@ -45,8 +38,7 @@ jest.mock('./repository', () => {
 });
 
 import { createApp } from './app';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const repoMock = require('./repository');
+const repoMock = jest.requireMock('./repository');
 
 const app = createApp();
 
@@ -94,6 +86,17 @@ describe('POST /notifications', () => {
       });
     expect(res.status).toBe(201);
     expect(res.body.body).toBe('Hello Alice, your order #42 is ready.');
+  });
+
+  it('queues a push notification', async () => {
+    const res = await request(app).post('/notifications').send({
+      recipient: 'device-token-xyz-1234',
+      channel: 'push',
+      body: 'You have a new message'
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.channel).toBe('push');
+    expect(res.body.status).toBe('sent');
   });
 
   it('rejects missing channel', async () => {
