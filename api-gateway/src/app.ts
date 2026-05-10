@@ -39,7 +39,6 @@ export function createApp(): express.Express {
       createProxyMiddleware({
         target: rule.target,
         changeOrigin: true,
-        pathRewrite: { [`^${rule.prefix}`]: '' },
         on: {
           proxyReq: (_proxyReq, req) => {
             logger.debug('Proxying request', {
