@@ -6,7 +6,7 @@ jest.mock('./repository', () => {
   const orders = new Map<number, ReturnType<typeof makeOrder>>();
 
   function makeOrder(id: number, userId: string, items: OrderItem[], total: number) {
-    return { id, userId, total, status: 'pending' as const, items, createdAt: new Date() };
+    return { id, userId, total, status: 'pending', items, createdAt: new Date() };
   }
 
   return {

@@ -5,7 +5,7 @@ jest.mock('./repository', () => {
   const items = new Map<number, ReturnType<typeof makeItem>>();
 
   function makeItem(id: number, recipient: string, channel: string, body: string, subject?: string) {
-    return { id, recipient, channel, subject: subject || null, body, status: 'queued' as const, attempts: 0, createdAt: new Date(), sentAt: null };
+    return { id, recipient, channel, subject: subject || null, body, status: 'queued', attempts: 0, createdAt: new Date(), sentAt: null };
   }
 
   return {
