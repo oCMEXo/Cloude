@@ -1,4 +1,4 @@
-import { createApp } from './app';
+import { createAppWithGraphQL } from './app';
 import { initSchema, pool } from './db';
 import { logger } from './logger';
 
@@ -21,9 +21,12 @@ async function main() {
     process.exit(1);
   }
 
-  const app = createApp();
+  // createAppWithGraphQL is async because Apollo Server needs to start up
+  // before its middleware can be attached to Express.
+  const app = await createAppWithGraphQL();
   app.listen(PORT, () => {
     logger.info('service-orders listening', { port: PORT });
+    logger.info('GraphQL available at', { url: `http://localhost:${PORT}/graphql` });
   });
 }
 

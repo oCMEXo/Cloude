@@ -2,7 +2,19 @@ import express, { Request, Response, NextFunction } from 'express';
 import { logger } from './logger';
 import { calculateTotal, canTransition, validateItems, OrderStatus } from './orders';
 import { insertOrder, getOrder, listByUser, setStatus } from './repository';
+import { attachGraphQL } from './graphql';
 
+/**
+ * Creates the Express app with REST endpoints.
+ * GraphQL is attached separately (async) via attachGraphQL() — call it
+ * before starting the HTTP listener, or use createAppWithGraphQL() below.
+ *
+ * Note: Two GET endpoints are now also exposed via GraphQL at /graphql:
+ *   - GET /orders/:id        ->  query { order(id: 1) { ... } }
+ *   - GET /orders?userId=... ->  query { ordersByUser(userId: "alice") { ... } }
+ * The REST endpoints are kept for backwards compatibility with the api-gateway
+ * and the existing test suite.
+ */
 export function createApp(): express.Express {
   const app = express();
   app.use(express.json());
@@ -92,5 +104,16 @@ export function createApp(): express.Express {
     }
   });
 
+  return app;
+}
+
+/**
+ * Wraps createApp() and additionally mounts the GraphQL endpoint at /graphql.
+ * Used by server.ts (the real entrypoint). Existing tests keep using
+ * createApp() synchronously so we don't have to rewrite them.
+ */
+export async function createAppWithGraphQL(): Promise<express.Express> {
+  const app = createApp();
+  await attachGraphQL(app);
   return app;
 }

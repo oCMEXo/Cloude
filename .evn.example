@@ -4,4 +4,9 @@
 # Used by service-auth to sign JWTs. Change in production.
 JWT_SECRET=local-dev-secret-please-change
 
-# (Postgres credentials are baked into compose for simplicity in this demo)
+# Postgres credentials for local dev (npm run dev outside Docker)
+POSTGRES_HOST=localhost
+POSTGRES_PORT=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=

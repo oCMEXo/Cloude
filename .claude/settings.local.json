@@ -4,7 +4,14 @@
       "Bash(npm install *)",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\artem\\\\Desktop\\\\Cloude\" -Directory)",
       "Bash(Select-Object -ExpandProperty Name)",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "Bash(node -e \"const p = require\\('c:/Users/artem/Desktop/Cloude/service-orders/node_modules/@apollo/server/package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.exports || {}\\), null, 2\\)\\)\")",
+      "Bash(npm run *)",
+      "Bash(docker exec *)",
+      "PowerShell($env:POSTGRES_HOST = \"localhost\"; $env:POSTGRES_PASSWORD = \"postgres\"; $env:POSTGRES_USER = \"postgres\"; $env:POSTGRES_DB = \"app\"; node -e \"const {Pool}=require\\('pg'\\); const p=new Pool\\({host:'localhost',port:5432,user:'postgres',password:'postgres',database:'app'}\\); p.query\\('SELECT 1'\\).then\\(r=>console.log\\('OK',r.rows\\)\\).catch\\(e=>console.error\\('FAIL',e.message\\)\\).finally\\(\\(\\)=>p.end\\(\\)\\)\" 2>&1)",
+      "PowerShell(netstat -ano)",
+      "PowerShell(Get-Process -Id 7172, 7140 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-WmiObject Win32_Process | Where-Object { $_.ProcessId -in @\\(7172, 7140\\) } | Select-Object ProcessId, Name, CommandLine)"
     ]
   }
 }
