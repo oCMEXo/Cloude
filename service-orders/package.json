@@ -1,17 +1,20 @@
 {
   "name": "service-orders",
-  "version": "2.0.0",
-  "description": "Orders service",
-  "main": "dist/index.js",
+  "version": "2.1.0",
+  "description": "Orders service (REST + GraphQL)",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
     "lint": "eslint 'src/**/*.ts'",
     "test": "jest --coverage --reporters=default --reporters=jest-junit"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.0",
     "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
     "pg": "^8.11.5",
     "winston": "^3.13.0"
   },
